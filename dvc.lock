@@ -29,6 +29,6 @@ stages:
     outs:
     - path: credit_card_fraud/models
       hash: md5
-      md5: 7ec46886057dadf01428e33f561ec48c.dir
-      size: 148174
+      md5: 539176e4cffdadd16527c98b770afef6.dir
+      size: 149285
       nfiles: 2

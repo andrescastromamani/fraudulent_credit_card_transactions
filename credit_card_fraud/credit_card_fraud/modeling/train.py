@@ -14,6 +14,8 @@ import typer
 
 from credit_card_fraud.config import (
     AUTOENCODER_MODEL_PATH,
+    MLFLOW_EXPERIMENT,
+    MLFLOW_TRACKING_URI,
     MLP_MODEL_PATH,
     PROCESSED_DATA_DIR,
 )
@@ -117,7 +119,8 @@ class MLPModel(BaseModel):
         ]
         
         # Inicio del experimento de MLflow para el modelo supervisado
-        mlflow.set_experiment("fraud_detection")
+        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+        mlflow.set_experiment(MLFLOW_EXPERIMENT)
         with mlflow.start_run(run_name="MLP_Supervisado_Training"):
             # Habilitar el registro automático de Keras/TensorFlow en MLflow
             mlflow.tensorflow.autolog(log_models=True)
@@ -125,6 +128,14 @@ class MLPModel(BaseModel):
             # Registrar hiperparámetros personalizados
             mlflow.log_param("learning_rate", self.learning_rate)
             mlflow.log_param("dropout_rate", self.dropout_rate)
+            mlflow.log_params(
+                {
+                    "input_dim": self.input_dim,
+                    "epochs": epochs,
+                    "batch_size": batch_size,
+                    "validation_split": validation_split,
+                }
+            )
             
             self.history = self.model.fit(
                 X_train,
@@ -182,10 +193,19 @@ class AutoencoderModel(BaseModel):
         ]
         
         # Inicio del experimento de MLflow para el Autoencoder
-        mlflow.set_experiment("fraud_detection")
+        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+        mlflow.set_experiment(MLFLOW_EXPERIMENT)
         with mlflow.start_run(run_name="Autoencoder_Training"):
             mlflow.tensorflow.autolog(log_models=True)
             mlflow.log_param("encoding_dim", self.encoding_dim)
+            mlflow.log_params(
+                {
+                    "input_dim": self.input_dim,
+                    "epochs": epochs,
+                    "batch_size": batch_size,
+                    "validation_split": validation_split,
+                }
+            )
             
             self.history = self.model.fit(
                 X_train,

@@ -4,6 +4,8 @@ channels:
 dependencies:
   - python=3.10
   - pip
+  - pyopenssl=24.2.1
+  - cryptography=43.0.3
   - typer
   - loguru
   - tqdm
@@ -15,6 +17,7 @@ dependencies:
   - matplotlib
   - scikit-learn
   - tensorflow
+  - tensorboard
   - mlflow
   - dvc
   - pip:

@@ -64,3 +64,16 @@ conda env update --file environment.yml --prune
 
 ## Run Project 
 python run_pipeline.py
+
+## MLflow
+
+El pipeline registra los entrenamientos y la evaluación en el experimento
+`fraud_detection`, usando `mlflow.db` como backend local.
+
+```bash
+python run_pipeline.py
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
+
+Después, abre `http://127.0.0.1:5000` para consultar parámetros, métricas y
+artefactos de cada corrida.

@@ -5,6 +5,15 @@ Usage:
 """
 
 from credit_card_fraud.config import REPORTS_DIR
+import mlflow
+
+from credit_card_fraud.config import (
+    AUTOENCODER_MODEL_PATH,
+    FIGURES_DIR,
+    MLFLOW_EXPERIMENT,
+    MLFLOW_TRACKING_URI,
+    MLP_MODEL_PATH,
+)
 from credit_card_fraud.dataset import CreditCardDataset
 from credit_card_fraud.features import FeatureEngineer
 from credit_card_fraud.modeling.predict import ModelEvaluator
@@ -62,10 +71,40 @@ def main() -> None:
 
     results_path = REPORTS_DIR / "model_results.csv"
     summary.to_csv(results_path, index=False)
+    figure_path = FIGURES_DIR / "pr_curves.png"
     evaluator.plot_precision_recall(
         predictions,
-        output_path=REPORTS_DIR / "figures" / "pr_curves.png",
+        output_path=figure_path,
     )
+
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    mlflow.set_experiment(MLFLOW_EXPERIMENT)
+    with mlflow.start_run(run_name="Evaluation_Comparativa"):
+        mlflow.log_params(
+            {
+                "epochs": EPOCHS,
+                "batch_size": BATCH_SIZE,
+                "seed": SEED,
+                "test_rows": len(y_test),
+            }
+        )
+        for _, row in summary.iterrows():
+            model_key = row["Modelo"].lower().replace(" ", "_").replace(":", "")
+            mlflow.log_metrics(
+                {
+                    f"{model_key}_threshold": float(row["Threshold"]),
+                    f"{model_key}_accuracy": float(row["Accuracy"]),
+                    f"{model_key}_precision": float(row["Precision"]),
+                    f"{model_key}_recall": float(row["Recall"]),
+                    f"{model_key}_f1": float(row["F1-Score"]),
+                    f"{model_key}_roc_auc": float(row["ROC-AUC"]),
+                    f"{model_key}_pr_auc": float(row["PR-AUC"]),
+                }
+            )
+        mlflow.log_artifact(str(results_path), artifact_path="evaluation")
+        mlflow.log_artifact(str(figure_path), artifact_path="evaluation")
+        mlflow.log_artifact(str(MLP_MODEL_PATH), artifact_path="checkpoints")
+        mlflow.log_artifact(str(AUTOENCODER_MODEL_PATH), artifact_path="checkpoints")
 
     print("=" * 80)
     print("TABLA COMPARATIVA DE MODELOS DE DEEP LEARNING")
