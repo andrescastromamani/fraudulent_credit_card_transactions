@@ -1,0 +1,34 @@
+schema: '2.0'
+stages:
+  run_pipeline:
+    cmd: python credit_card_fraud/run_pipeline.py
+    deps:
+    - path: credit_card_fraud/credit_card_fraud/dataset.py
+      hash: md5
+      md5: 751d5c226b6817aa65b637b46ea49884
+      size: 1042
+    - path: credit_card_fraud/credit_card_fraud/features.py
+      hash: md5
+      md5: 258aa34152e71a27840f7d35c06cf944
+      size: 3469
+    - path: credit_card_fraud/credit_card_fraud/modeling/train.py
+      hash: md5
+      md5: 7d91fa98bf988f783fe15d4507148398
+      size: 8177
+    - path: credit_card_fraud/run_pipeline.py
+      hash: md5
+      md5: ede4f19f50595c0723c67100344c7afd
+      size: 2482
+    params:
+      params.yaml:
+        prepare.random_state: 42
+        prepare.split_ratio: 0.2
+        train.batch_size: 32
+        train.epochs: 20
+        train.learning_rate: 0.001
+    outs:
+    - path: credit_card_fraud/models
+      hash: md5
+      md5: 7ec46886057dadf01428e33f561ec48c.dir
+      size: 148174
+      nfiles: 2

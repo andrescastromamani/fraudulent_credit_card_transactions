@@ -1,0 +1,16 @@
+stages:
+  run_pipeline:
+    cmd: python credit_card_fraud/run_pipeline.py
+    deps:
+    - credit_card_fraud/run_pipeline.py
+    - credit_card_fraud/credit_card_fraud/dataset.py
+    - credit_card_fraud/credit_card_fraud/features.py
+    - credit_card_fraud/credit_card_fraud/modeling/train.py
+    params:
+    - prepare.random_state
+    - prepare.split_ratio
+    - train.batch_size
+    - train.epochs
+    - train.learning_rate
+    outs:
+    - credit_card_fraud/models
