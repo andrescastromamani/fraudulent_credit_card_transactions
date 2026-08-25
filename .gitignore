@@ -2,3 +2,4 @@
 mlruns/
 data/raw
 data/raw/creditcard.csv
+data/raw/*.csv
