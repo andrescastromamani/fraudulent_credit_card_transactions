@@ -8,7 +8,7 @@ house_price_project/data/
 
 # Mac OS-specific storage files
 .DS_Store
-
+data/raw/creditcard.csv
 # vim
 *.swp
 *.swo
